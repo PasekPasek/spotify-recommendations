@@ -1,14 +1,8 @@
-const express = require('express');
-const routes = require('./src/routes');
-const app = express();
-const port = 3000;
+const config = require('config');
+const app = require('./src/app');
 
-app.get('/', (req, res) => {
-    res.send('UI')
-})
-
-app.use('/api', routes);
+const port = config.get('Application.port');
 
 app.listen(port, () => {
-  console.log(`Listening at port ${port}`);
+    console.log(`App listening at port ${port}`);
 });

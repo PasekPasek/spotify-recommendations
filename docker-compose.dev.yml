@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  api_gateway:
+    build:
+      context: ./apiGateway
+      target: development
+      args:
+        BUILD_VERSION: development
+        PORT: 3000
+    environment: 
+      PORT: 3000
+    volumes: 
+      - ./apiGateway/src:/usr/src/app/src
+      - ./apiGateway/index.js:/usr/src/app/index.js
+      - ./apiGateway/node_modules:/usr/src/app/node_modules
+    ports:
+      - "80:3000"

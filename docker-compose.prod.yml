@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+  api_gateway:
+    build:
+      context: ./apiGateway
+      target: production
+      args:
+        BUILD_VERSION: production
+        PORT: 3000
+    environment: 
+      PORT: 3000
+    ports:
+      - "80:3000"

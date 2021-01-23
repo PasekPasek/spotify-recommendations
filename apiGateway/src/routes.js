@@ -1,5 +1,6 @@
-var express = require('express')
-var router = express.Router();
+const express = require('express');
+
+const router = express.Router();
 
 router.use('/auth', (req, res) => {
     res.send('Auth service');
@@ -10,7 +11,7 @@ router.use('/exercises', (req, res) => {
 });
 
 router.use('/sets', (req, res) => {
-    res.send('Auth service');
+    res.send('Auth set service');
 });
 
 module.exports = router;
