@@ -1,4 +1,3 @@
-/* eslint-disable no-tabs */
 module.exports = {
     env: {
         browser: true,
