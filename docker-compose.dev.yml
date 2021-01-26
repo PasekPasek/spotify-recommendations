@@ -9,9 +9,21 @@ services:
         PORT: 3000
     environment: 
       PORT: 3000
+      UI_ENDPOINT: http://ui:3001
     volumes: 
       - ./apiGateway/src:/usr/src/app/src
       - ./apiGateway/index.js:/usr/src/app/index.js
-      - ./apiGateway/node_modules:/usr/src/app/node_modules
     ports:
       - "3000:3000"
+
+  ui:
+    build:
+      context: ./ui
+      target: development
+      args:
+        BUILD_VERSION: development
+        PORT: 3001
+    environment: 
+      PORT: 3001
+    volumes: 
+      - ./ui/src:/usr/src/app/src

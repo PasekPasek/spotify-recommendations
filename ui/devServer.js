@@ -2,17 +2,18 @@
 const express = require('express');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
+const config = require('config');
 
 const app = express();
-const config = require('./webpack.dev.js');
+const webpackConfig = require('./webpack.dev.js');
 
 const port = config.get('Application.port');
 
-const compiler = webpack(config);
+const compiler = webpack(webpackConfig);
 
 app.use(
     webpackDevMiddleware(compiler, {
-        publicPath: config.output.publicPath,
+        publicPath: webpackConfig.output.publicPath,
     }),
 );
 
