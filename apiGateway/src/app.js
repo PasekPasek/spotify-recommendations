@@ -1,5 +1,6 @@
 const express = require('express');
 const config = require('config');
+const proxy = require('express-http-proxy');
 
 const routes = require('./routes');
 
@@ -8,8 +9,6 @@ const app = express();
 
 app.use('/api', routes);
 
-app.get('/', (req, res) => {
-    res.redirect(uiEndpoint);
-});
+app.get('*', proxy(uiEndpoint));
 
 module.exports = app;

@@ -5,11 +5,11 @@ FROM node:15.6-alpine as base
 ENV NODE_ENV ${BUILD_VERSION}
 EXPOSE ${PORT}
 WORKDIR /usr/src/app
+COPY config ./config
 COPY package*.json ./
 
 FROM base AS install-dev
 WORKDIR /usr/src/app
-COPY config ./config
 COPY webpack*.js ./
 COPY .babelrc .
 COPY public ./public

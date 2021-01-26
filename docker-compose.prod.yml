@@ -7,9 +7,9 @@ services:
       args:
         BUILD_VERSION: production
         PORT: 3000
-        UI_ENDPOINT: http://ui:3001
     environment: 
       PORT: 3000
+      UI_ENDPOINT: http://ui:3001
     ports:
       - "80:3000"
 
