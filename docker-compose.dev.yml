@@ -25,5 +25,7 @@ services:
         PORT: 3001
     environment: 
       PORT: 3001
+      AUTH_DOMAIN: ${AUTH_DOMAIN}
+      AUTH_CLIENT_ID: ${AUTH_CLIENT_ID}
     volumes: 
       - ./ui/src:/usr/src/app/src

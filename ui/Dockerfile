@@ -1,8 +1,11 @@
 ARG BUILD_VERSION=production
 ARG PORT=3000
+ARG AUTH_DOMAIN=auth.domain
+ARG AUTH_CLIENT_ID=auth.client
 
 FROM node:15.6-alpine as base
-ENV NODE_ENV ${BUILD_VERSION}
+ARG BUILD_VERSION
+ENV NODE_ENV=${BUILD_VERSION}
 EXPOSE ${PORT}
 WORKDIR /usr/src/app
 COPY config ./config
@@ -28,9 +31,13 @@ WORKDIR /usr/src/app
 FROM test AS development
 WORKDIR /usr/src/app
 COPY devServer.js .
-CMD ["npm", "run", "start-dev"]
+CMD ["node", "devServer.js"]
 
 FROM install-dev as builder
+ARG AUTH_DOMAIN
+ARG AUTH_CLIENT_ID
+ENV AUTH_DOMAIN=${AUTH_DOMAIN}
+ENV AUTH_CLIENT_ID=${AUTH_CLIENT_ID}
 WORKDIR /usr/src/app
 RUN npm run build
 

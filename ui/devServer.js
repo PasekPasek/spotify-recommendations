@@ -11,14 +11,13 @@ const webpackConfig = require('./webpack.dev.js');
 const port = config.get('Application.port');
 
 const compiler = webpack(webpackConfig);
+app.use(webpackHotMiddleware(compiler));
 
 app.use(
     webpackDevMiddleware(compiler, {
         publicPath: webpackConfig.output.publicPath,
     }),
 );
-
-app.use(webpackHotMiddleware(compiler));
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}!\n`);

@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const path = require('path');
+const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -23,6 +24,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: 'public/index.html',
         }),
+        new webpack.EnvironmentPlugin(['NODE_ENV', 'AUTH_DOMAIN', 'AUTH_CLIENT_ID']),
     ],
     output: {
         filename: '[name].bundle.js',
