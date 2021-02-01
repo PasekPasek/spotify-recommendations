@@ -28,12 +28,12 @@ const App = () => (
                 </ul>
             </div>
             <Switch>
-                <Route path="/spotify">
+                <Route exact path="/spotify">
                     <>
                         <h1>Spotify Analyzer</h1>
                     </>
                 </Route>
-                <Route path="/">
+                <Route exact path="/">
                     <>
                         <h1>Home</h1>
                         <LoginButton />
@@ -41,7 +41,7 @@ const App = () => (
                         <Profile />
                     </>
                 </Route>
-                <Route path="*">
+                <Route>
                     <>
                         <h1>404 - NOT FOUND</h1>
                     </>
