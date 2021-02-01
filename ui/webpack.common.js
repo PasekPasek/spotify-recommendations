@@ -24,10 +24,15 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: 'public/index.html',
         }),
-        new webpack.EnvironmentPlugin(['NODE_ENV', 'AUTH_DOMAIN', 'AUTH_CLIENT_ID']),
+        new webpack.EnvironmentPlugin({
+            NODE_ENV: 'production',
+            AUTH_DOMAIN: 'auth.domain.com',
+            AUTH_CLIENT_ID: 'xyz',
+        }),
     ],
     output: {
         filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'dist'),
+        publicPath: '/static/',
     },
 };

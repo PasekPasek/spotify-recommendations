@@ -4,8 +4,6 @@ ARG AUTH_DOMAIN=auth.domain
 ARG AUTH_CLIENT_ID=auth.client
 
 FROM node:15.6-alpine as base
-ARG BUILD_VERSION
-ENV NODE_ENV=${BUILD_VERSION}
 EXPOSE ${PORT}
 WORKDIR /usr/src/app
 COPY config ./config
@@ -42,6 +40,8 @@ WORKDIR /usr/src/app
 RUN npm run build
 
 FROM base AS production
+ARG BUILD_VERSION
+ENV NODE_ENV=${BUILD_VERSION}
 WORKDIR /usr/src/app
 RUN npm install --production
 COPY --from=builder /usr/src/app/dist ./dist
