@@ -27,6 +27,8 @@ WORKDIR /usr/src/app
 # TO DO
 
 FROM test AS development
+ARG BUILD_VERSION
+ENV NODE_ENV=${BUILD_VERSION}
 WORKDIR /usr/src/app
 COPY devServer.js .
 CMD ["node", "devServer.js"]
