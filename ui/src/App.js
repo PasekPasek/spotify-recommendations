@@ -19,6 +19,7 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import LoginButton from './components/LoginButton';
 import LogoutButton from './components/LogoutButton';
 import Profile from './components/ProfileInfo';
+import Spotify from './screens/spotify/Spotify';
 
 const authDomain = process.env.AUTH_DOMAIN;
 const authClientId = process.env.AUTH_CLIENT_ID;
@@ -69,9 +70,7 @@ const App = () => {
                 <Container maxWidth="xl">
                     <Switch>
                         <Route exact path="/spotify">
-                            <>
-                                <h1>Spotify Analyzer</h1>
-                            </>
+                            <Spotify />
                         </Route>
                         <Route exact path="/">
                             <>
