@@ -8,7 +8,6 @@ import {
     Route,
     Link,
 } from 'react-router-dom';
-import Container from '@material-ui/core/Container';
 import MenuIcon from '@material-ui/icons/Menu';
 import IconButton from '@material-ui/core/IconButton';
 import Drawer from '@material-ui/core/Drawer';
@@ -16,6 +15,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core';
 import LoginButton from './components/LoginButton';
 import LogoutButton from './components/LogoutButton';
 import Profile from './components/ProfileInfo';
@@ -23,6 +23,12 @@ import Spotify from './screens/spotify/Spotify';
 
 const authDomain = process.env.AUTH_DOMAIN;
 const authClientId = process.env.AUTH_CLIENT_ID;
+// const defaultTheme = createMuiTheme();
+const darkTheme = createMuiTheme({
+    palette: {
+        type: 'dark',
+    },
+});
 
 const App = () => {
     const [open, setOpen] = useState(false);
@@ -33,41 +39,41 @@ const App = () => {
 
     return (
         <>
-            <CssBaseline />
-            <Router>
+            <ThemeProvider theme={darkTheme}>
+                <CssBaseline />
+                <Router>
 
-                <ClickAwayListener onClickAway={toggleDrawer(false)}>
-                    <>
-                        <IconButton
-                            color="inherit"
-                            aria-label="open drawer"
-                            onClick={toggleDrawer(true)}
-                            edge="start"
-                            style={{ position: 'absolute', top: 10, right: 10 }}
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Drawer
-                            anchor="right"
-                            open={open}
-                            onClose={toggleDrawer(false)}
-                        >
-                            <List>
-                                <ListItem button onClick={toggleDrawer(false)}>
-                                    <ListItemText primary="Close" />
-                                </ListItem>
-                                <ListItem button component={Link} to="/" onClick={toggleDrawer(false)}>
-                                    <ListItemText primary="Home" />
-                                </ListItem>
-                                <ListItem button component={Link} to="/spotify" onClick={toggleDrawer(false)}>
-                                    <ListItemText primary="Spotify" />
-                                </ListItem>
-                            </List>
-                        </Drawer>
-                    </>
-                </ClickAwayListener>
+                    <ClickAwayListener onClickAway={toggleDrawer(false)}>
+                        <>
+                            <IconButton
+                                color="inherit"
+                                aria-label="open drawer"
+                                onClick={toggleDrawer(true)}
+                                edge="start"
+                                style={{ position: 'absolute', top: 10, right: 10 }}
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                            <Drawer
+                                anchor="right"
+                                open={open}
+                                onClose={toggleDrawer(false)}
+                            >
+                                <List>
+                                    <ListItem button onClick={toggleDrawer(false)}>
+                                        <ListItemText primary="Close" />
+                                    </ListItem>
+                                    <ListItem button component={Link} to="/" onClick={toggleDrawer(false)}>
+                                        <ListItemText primary="Home" />
+                                    </ListItem>
+                                    <ListItem button component={Link} to="/spotify" onClick={toggleDrawer(false)}>
+                                        <ListItemText primary="Spotify" />
+                                    </ListItem>
+                                </List>
+                            </Drawer>
+                        </>
+                    </ClickAwayListener>
 
-                <Container maxWidth="xl">
                     <Switch>
                         <Route exact path="/spotify">
                             <Spotify />
@@ -86,8 +92,8 @@ const App = () => {
                             </>
                         </Route>
                     </Switch>
-                </Container>
-            </Router>
+                </Router>
+            </ThemeProvider>
         </>
     );
 };

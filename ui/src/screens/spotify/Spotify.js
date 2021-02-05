@@ -16,7 +16,7 @@ export default () => (
             <Grid item xs={12}>
                 <Card>
                     <CardContent>
-                        <Typography component="h1">
+                        <Typography component="h1" variant="h1">
                             Spotify Analyzer
                         </Typography>
                         <Typography component="p">
@@ -24,7 +24,6 @@ export default () => (
                         </Typography>
                         <Button
                             variant="outlined"
-                            color="primary"
                             startIcon={<SpotifyIcon />}
                             onClick={handleLogin}
                         >
