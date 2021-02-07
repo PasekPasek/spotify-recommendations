@@ -20,6 +20,7 @@ import LoginButton from './components/LoginButton';
 import LogoutButton from './components/LogoutButton';
 import Profile from './components/ProfileInfo';
 import Spotify from './screens/spotify/Spotify';
+import SpotifyCallback from './screens/spotify/SpotifyCallback';
 
 const authDomain = process.env.AUTH_DOMAIN;
 const authClientId = process.env.AUTH_CLIENT_ID;
@@ -104,7 +105,17 @@ const AuthWrapper = () => (
         clientId={authClientId}
         redirectUri={window.location.origin}
     >
-        <App />
+        <Router>
+            <Switch>
+                <Route exact path="/spotify-auth-callback">
+                    <SpotifyCallback />
+                </Route>
+
+                <Route>
+                    <App />
+                </Route>
+            </Switch>
+        </Router>
     </Auth0Provider>
 );
 

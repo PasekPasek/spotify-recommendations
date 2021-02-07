@@ -1,0 +1,11 @@
+{
+    "Application": {
+        "port": "80",
+        "baseURL": "http://localhost:3000/api/spotify"
+    },
+    "SpotifyConfig": {
+        "authURL": "https://accounts.spotify.com/authorize",
+        "tokenURL": "https://accounts.spotify.com/api/token",
+        "userURL": "https://api.spotify.com/v1/me"
+    }
+}

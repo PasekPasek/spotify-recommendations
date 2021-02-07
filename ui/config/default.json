@@ -1,5 +1,8 @@
 {
     "Application": {
         "port": "80"
+    },
+    "Endpoints": {
+        "spotifyAuth": "http://localhost:3000/api/spotify/authorize"
     }
 }

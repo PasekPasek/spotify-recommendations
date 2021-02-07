@@ -1,5 +1,8 @@
 {
     "Application": {
         "port": "PORT"
+    },
+    "Endpoints": {
+        "spotifyAuth": "SPOTIFY_AUTH_ENDPOINT"
     }
 }

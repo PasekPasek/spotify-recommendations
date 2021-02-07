@@ -3,6 +3,7 @@
         "port": "PORT"
     },
     "Enpoints": {
-        "ui": "UI_ENDPOINT"
+        "ui": "UI_ENDPOINT",
+        "spotifyService": "SPOTIFY_SERVICE_ENDPOINT"
     }
 }
