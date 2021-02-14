@@ -19,8 +19,8 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core';
 import LoginButton from './components/LoginButton';
 import LogoutButton from './components/LogoutButton';
 import Profile from './components/ProfileInfo';
-import Spotify from './screens/spotify/Spotify';
-import SpotifyCallback from './screens/spotify/SpotifyCallback';
+import Spotify from './screens/spotify';
+import SpotifyCallback from './screens/spotify/components/SpotifyCallback';
 
 const authDomain = process.env.AUTH_DOMAIN;
 const authClientId = process.env.AUTH_CLIENT_ID;

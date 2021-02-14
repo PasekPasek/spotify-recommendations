@@ -4,10 +4,12 @@ const URI = require('urijs');
 const cookieParser = require('cookie-parser');
 const fetch = require('node-fetch');
 const generateState = require('./utils/generateState');
+const getBasicAuthHeaders = require('./utils/getBasicAuthHeaders');
+const getAccessTokenHeaders = require('./utils/getAccessTokenHeaders');
 
 const app = express();
 const {
-    clientId, clientSecret, authURL, tokenURL, userURL,
+    clientId, authURL, tokenURL, userURL,
 } = config.get('SpotifyConfig');
 const baseURL = config.get('Application.baseURL');
 const stateCookieKey = 'spotify_auth_state';
@@ -24,13 +26,11 @@ app.get('/user', async (req, res) => {
         return res.status(400).json({ message: 'Wrong request' });
     }
 
-    const spotifyRequestHeaders = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-    };
-
     try {
-        const userDataResponse = await fetch(userURL, { headers: spotifyRequestHeaders });
+        const userDataResponse = await fetch(
+            userURL,
+            { headers: getAccessTokenHeaders(accessToken) },
+        );
 
         if (!userDataResponse.ok) {
             return res.status(userDataResponse.status).json({ message: `Spotify API responded with ${userDataResponse.status}` });
@@ -53,7 +53,7 @@ app.get('/authorize', (req, res) => {
     res.cookie(stateCookieKey, state, { httpOnly: true });
     res.cookie(redirectURICookieKey, redirectUri, { httpOnly: true });
 
-    const scopes = 'user-read-recently-played user-top-read user-read-email user-read-private';
+    const scopes = 'user-read-recently-played user-top-read';
     const spotifyAuthURL = new URI(authURL);
     spotifyAuthURL.setQuery({
         response_type: 'code',
@@ -90,22 +90,16 @@ app.get('/auth-callback', async (req, res) => {
         redirect_uri: spotifyAuthRedirectURI.toString(),
     };
 
-    const base64EncodedCredentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-    const tokenRequestHeaders = {
-        'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        Authorization: `Basic ${base64EncodedCredentials}`,
-    };
-
     try {
-        const tokenResponse = await fetch(tokenURL, { method: 'POST', body: new URLSearchParams(tokenRequestBody), headers: tokenRequestHeaders });
+        const tokenResponse = await fetch(tokenURL, { method: 'POST', body: new URLSearchParams(tokenRequestBody), headers: getBasicAuthHeaders() });
         if (!tokenResponse.ok) {
             const redirectWithErrorUri = new URI(redirectURI)
                 .setQuery({ error: `status-${tokenResponse.status}` });
             return res.redirect(redirectWithErrorUri);
         }
         const data = await tokenResponse.json();
-        res.cookie(accessTokenCookieKey, data.access_token, { httpOnly: true });
-        res.cookie(refreshTokenCookieKey, data.refresh_token, { httpOnly: true });
+        res.cookie(accessTokenCookieKey, data.access_token, { httpOnly: true, sameSite: 'strict' });
+        res.cookie(refreshTokenCookieKey, data.refresh_token, { httpOnly: true, sameSite: 'strict' });
     } catch (err) {
         const redirectWithErrorUri = new URI(redirectURI).setQuery({ error: 'fetch_token' });
         return res.redirect(redirectWithErrorUri);
@@ -113,6 +107,31 @@ app.get('/auth-callback', async (req, res) => {
 
     const redirectWithSuccess = new URI(redirectURI).setQuery({ success: 'true' });
     return res.redirect(redirectWithSuccess);
+});
+
+app.get('/refresh-token', async (req, res) => {
+    const refreshToken = req.cookies[refreshTokenCookieKey];
+
+    if (!refreshToken) {
+        return res.status(400).json({ message: 'Wrong request' });
+    }
+
+    const refreshTokenRequestBody = {
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+    };
+    try {
+        const tokenResponse = await fetch(tokenURL, { method: 'POST', body: new URLSearchParams(refreshTokenRequestBody), headers: getBasicAuthHeaders() });
+        if (!tokenResponse.ok) {
+            return res.status(tokenResponse.code).json({ message: `Spotify API responded with ${tokenResponse.status}` });
+        }
+        const data = await tokenResponse.json();
+        res.cookie(accessTokenCookieKey, data.access_token, { httpOnly: true, sameSite: 'strict' });
+        return res.status(200).json({ message: 'Token refreshed' });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: err.message });
+    }
 });
 
 module.exports = app;
