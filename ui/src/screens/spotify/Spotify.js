@@ -8,30 +8,29 @@ import SpotifyIcon from '../../icons/SpotifyIcon';
 
 export default () => {
     let windowObjectReference = null;
-    const target = 'spotify_auth_window';
     const receiveMessage = (event) => {
-        // if (event.origin !== BASE_URL) {
-        //     return;
-        // }
         const { data } = event;
+        console.log(data);
         // TO DO: connect with state
-        console.log('🚀 ~ file: Spotify.js ~ line 17 ~ receiveMessage ~ data', data);
+        window.removeEventListener('message', receiveMessage);
     };
 
+    const channel = new BroadcastChannel('spotify-auth');
+    channel.addEventListener('message', (event) => receiveMessage(event), false);
+
     const handleLogin = () => {
-        window.removeEventListener('message', receiveMessage);
+        window.removeEventListener('message', receiveMessage, false);
         const strWindowFeatures = 'toolbar=no, menubar=no, width=600, height=700, top=100, left=100';
-        if (windowObjectReference === null || windowObjectReference.closed) {
-            // TODO: move to config
-            const callbackUrl = 'http://localhost:3000/spotify-auth-callback';
-            // TODO: move to config
-            windowObjectReference = window.open(`http://localhost:3000/api/spotify/authorize?redirectUri=${encodeURI(callbackUrl)}`, target, strWindowFeatures);
+
+        // TODO: move to config
+        const callbackUrl = '/spotify-auth-callback';
+        const authPopupUrl = `/api/spotify/authorize?redirectUri=${encodeURI(callbackUrl)}`;
+
+        if (windowObjectReference === null || windowObjectReference?.closed) {
+            windowObjectReference = window.open(authPopupUrl, 'spotify_auth_window', strWindowFeatures);
         } else {
             windowObjectReference.focus();
         }
-
-        // TO DO: fix too many msgs
-        window.addEventListener('message', (event) => receiveMessage(event), false);
     };
 
     return (

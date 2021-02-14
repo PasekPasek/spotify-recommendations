@@ -1,6 +1,9 @@
 {
     "Application": {
-        "port": "PORT"
+        "port": "PORT",
+        "httpsEnabled": "HTTPS_ENABLED",
+        "sslCert": "SSL_CRT_FILE",
+        "sslKey": "SSL_KEY_FILE"
     },
     "Enpoints": {
         "ui": "UI_ENDPOINT",

@@ -7,7 +7,6 @@ EXPOSE ${PORT}
 WORKDIR /usr/src/app
 COPY config ./config
 COPY src ./src
-COPY index.js .
 COPY package*.json ./
 
 FROM base AS builder
@@ -30,4 +29,4 @@ CMD ["npm", "run", "start-dev"]
 FROM base AS production
 WORKDIR /usr/src/app
 RUN npm install --production
-CMD ["node", "index.js"]
+CMD ["node", "src/index.js"]
