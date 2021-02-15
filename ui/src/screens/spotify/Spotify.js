@@ -6,9 +6,10 @@ import {
 } from '@material-ui/core';
 import { SpotifyAuthContext } from './contexts/auth';
 import SpotifyIcon from '../../icons/SpotifyIcon';
+import Recommendations from './components/Recommendations';
 
 export default () => {
-    const { handleLogin, isLoggedIn } = useContext(SpotifyAuthContext);
+    const { handleLogin, isLoggedIn, userData } = useContext(SpotifyAuthContext);
 
     return (
         <Container maxWidth="md">
@@ -22,7 +23,7 @@ export default () => {
                             <Typography component="p">
                                 I won't steal your data. I promise
                             </Typography>
-                            {!isLoggedIn && (
+                            {!isLoggedIn ? (
                                 <Button
                                     variant="outlined"
                                     startIcon={<SpotifyIcon />}
@@ -30,7 +31,12 @@ export default () => {
                                 >
                                     Log in
                                 </Button>
+                            ) : (
+                                <Typography component="p">
+                                    {`Hello, ${userData.display_name}`}
+                                </Typography>
                             )}
+                            <Recommendations />
                         </CardContent>
                     </Card>
                 </Grid>
