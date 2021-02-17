@@ -9,7 +9,7 @@ const getAccessTokenHeaders = require('./utils/getAccessTokenHeaders');
 
 const app = express();
 const {
-    clientId, authURL, tokenURL, userURL,
+    clientId, authURL, tokenURL, userURL, recommendationsURL, searchURL,
 } = config.get('SpotifyConfig');
 const baseURL = config.get('Application.baseURL');
 const stateCookieKey = 'spotify_auth_state';
@@ -19,6 +19,59 @@ const refreshTokenCookieKey = 'spotify_refresh_token';
 const spotifyAuthRedirectURI = new URI(baseURL).segment('auth-callback');
 
 app.use(cookieParser());
+
+app.get('/search', async (req, res) => {
+    const accessToken = req.cookies[accessTokenCookieKey];
+    if (!accessToken) {
+        return res.status(400).json({ message: 'Wrong request' });
+    }
+
+    const searchURLwithQuery = new URI(searchURL);
+    searchURLwithQuery.query(req.query);
+
+    try {
+        const userDataResponse = await fetch(
+            searchURLwithQuery.toString(),
+            { headers: getAccessTokenHeaders(accessToken) },
+        );
+
+        if (!userDataResponse.ok) {
+            return res.status(userDataResponse.status).json({ message: `Spotify API responded with ${userDataResponse.status}` });
+        }
+
+        const data = await userDataResponse.json();
+        return res.status(200).json(data);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+app.get('/recommendations', async (req, res) => {
+    const accessToken = req.cookies[accessTokenCookieKey];
+    if (!accessToken) {
+        return res.status(400).json({ message: 'Wrong request' });
+    }
+
+    const recommendationsURLwithQuery = new URI(recommendationsURL);
+    recommendationsURLwithQuery.query(req.query);
+
+    try {
+        const userDataResponse = await fetch(
+            recommendationsURLwithQuery.toString(),
+            { headers: getAccessTokenHeaders(accessToken) },
+        );
+
+        if (!userDataResponse.ok) {
+            return res.status(userDataResponse.status).json({ message: `Spotify API responded with ${userDataResponse.status}` });
+        }
+
+        const data = await userDataResponse.json();
+        return res.status(200).json(data);
+    } catch (err) {
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
 app.get('/user', async (req, res) => {
     const accessToken = req.cookies[accessTokenCookieKey];

@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import {
     Slider, Typography,
 } from '@material-ui/core';
+import AsyncSelect from 'react-select/async';
 import { SpotifyAuthContext } from '../contexts/auth';
 
 const marks = [
@@ -30,9 +31,51 @@ export default () => {
         return (<p>Log in, please</p>);
     }
 
+    const loadArtistsOptions = async (input) => {
+        let options = [];
+        try {
+            const result = await fetch(`/api/spotify/search?type=artist&q=${input.trim()}`);
+            const { artists: { items = {} } = {} } = await result.json();
+            options = items.map((el) => ({ value: el.id, label: el.name }));
+        } catch (err) {
+            console.error(err);
+        }
+        return options;
+    };
+
+    const loadTracksOptions = async (input) => {
+        let options = [];
+        try {
+            const result = await fetch(`/api/spotify/search?type=track&q=${input.trim()}`);
+            const { tracks: { items = {} } = {} } = await result.json();
+            options = items.map((el) => ({ value: el.id, label: `${el.artists[0].name} - ${el.name}` }));
+        } catch (err) {
+            console.error(err);
+        }
+        return options;
+    };
+
     return (
         <>
             <p>Recommendations</p>
+            <Typography id="discrete-slider-restrict" gutterBottom>
+                Artists
+            </Typography>
+            <AsyncSelect
+                isMulti
+                cacheOptions
+                defaultOptions
+                loadOptions={loadArtistsOptions}
+            />
+            <Typography id="discrete-slider-restrict" gutterBottom>
+                Tracks
+            </Typography>
+            <AsyncSelect
+                isMulti
+                cacheOptions
+                defaultOptions
+                loadOptions={loadTracksOptions}
+            />
             <Typography id="discrete-slider-restrict" gutterBottom>
                 Simple slider
             </Typography>
