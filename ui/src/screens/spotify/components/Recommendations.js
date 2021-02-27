@@ -1,4 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import URI from 'urijs';
+import isEmpty from 'lodash/isEmpty';
 import {
     Slider, Typography,
 } from '@material-ui/core';
@@ -24,18 +27,89 @@ const marks = [
     },
 ];
 
+const RecommendationList = ({ recommended = [] }) => {
+    const renderTile = (item) => {
+        const { name, album } = item;
+        return (
+            <div key={name} style={{ width: 200, height: 200 }}>
+                <img alt={name} src={album.images[1].url} style={{ width: '100%' }} />
+            </div>
+        );
+    };
+
+    return (
+        <div style={{
+            display: 'grid',
+            gridGap: 0,
+            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 200px))',
+        }}
+        >
+            {
+                recommended.map((item) => renderTile(item))
+            }
+        </div>
+    );
+};
+
+RecommendationList.defaultProps = {
+    recommended: [],
+};
+
+RecommendationList.propTypes = {
+    recommended: PropTypes.arrayOf(PropTypes.object),
+};
+
 export default () => {
     const { isLoggedIn } = useContext(SpotifyAuthContext);
+
+    const [artists, setArtists] = useState([]);
+    const [tracks, setTracks] = useState([]);
+    const [recommended, setRecommended] = useState([]);
 
     if (!isLoggedIn) {
         return (<p>Log in, please</p>);
     }
 
+    const getRecommendations = async () => {
+        try {
+            const recommendedURL = new URI('/api/spotify/recommendations');
+            recommendedURL.query({
+                seed_tracks: tracks.map(({ value }) => value).join(','),
+                seed_artists: artists.map(({ value }) => value).join(','),
+                limit: 50,
+            });
+            const result = await fetch(recommendedURL.toString());
+            if (!result.ok) {
+                setRecommended([]);
+            }
+            const jsonResult = await result.json();
+            const { tracks: recommendedTracks } = jsonResult;
+
+            if (Array.isArray(recommendedTracks) && recommendedTracks.length) {
+                setRecommended(recommendedTracks);
+            }
+        } catch (err) {
+            setRecommended([]);
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        if (!isEmpty(artists, tracks)) {
+            getRecommendations();
+        }
+    }, [artists, tracks]);
+
     const loadArtistsOptions = async (input) => {
         let options = [];
+
+        if (!input) {
+            return options;
+        }
+
         try {
             const result = await fetch(`/api/spotify/search?type=artist&q=${input.trim()}`);
-            const { artists: { items = {} } = {} } = await result.json();
+            const { artists: { items = [] } = {} } = await result.json();
             options = items.map((el) => ({ value: el.id, label: el.name }));
         } catch (err) {
             console.error(err);
@@ -45,9 +119,14 @@ export default () => {
 
     const loadTracksOptions = async (input) => {
         let options = [];
+
+        if (!input) {
+            return options;
+        }
+
         try {
             const result = await fetch(`/api/spotify/search?type=track&q=${input.trim()}`);
-            const { tracks: { items = {} } = {} } = await result.json();
+            const { tracks: { items = [] } = {} } = await result.json();
             options = items.map((el) => ({ value: el.id, label: `${el.artists[0].name} - ${el.name}` }));
         } catch (err) {
             console.error(err);
@@ -62,6 +141,7 @@ export default () => {
                 Artists
             </Typography>
             <AsyncSelect
+                onChange={(selectedArtists) => setArtists(selectedArtists)}
                 isMulti
                 cacheOptions
                 defaultOptions
@@ -71,6 +151,7 @@ export default () => {
                 Tracks
             </Typography>
             <AsyncSelect
+                onChange={(selectedTracks) => setTracks(selectedTracks)}
                 isMulti
                 cacheOptions
                 defaultOptions
@@ -86,6 +167,7 @@ export default () => {
                 valueLabelDisplay="auto"
                 marks={marks}
             />
+            <RecommendationList recommended={recommended} />
         </>
     );
 };

@@ -23,7 +23,7 @@ export const SpotifyAuthProvider = ({ children }) => {
             setUserData(userDataJson);
             setLogin(true);
         } catch (err) {
-            console.err('Problem with fetching user data');
+            console.error('Problem with fetching user data');
         } finally {
             setIsLoading(false);
         }

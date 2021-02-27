@@ -36,7 +36,7 @@ export default () => {
                                     {`Hello, ${userData.display_name}`}
                                 </Typography>
                             )}
-                            <Recommendations />
+                            {isLoggedIn && <Recommendations />}
                         </CardContent>
                     </Card>
                 </Grid>
