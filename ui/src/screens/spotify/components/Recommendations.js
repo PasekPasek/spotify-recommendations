@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import URI from 'urijs';
 import isEmpty from 'lodash/isEmpty';
 import {
@@ -7,6 +6,7 @@ import {
 } from '@material-ui/core';
 import AsyncSelect from 'react-select/async';
 import { SpotifyAuthContext } from '../contexts/auth';
+import TrackList from './TrackList';
 
 const marks = [
     {
@@ -27,38 +27,6 @@ const marks = [
     },
 ];
 
-const RecommendationList = ({ recommended = [] }) => {
-    const renderTile = (item) => {
-        const { name, album } = item;
-        return (
-            <div key={name} style={{ width: 200, height: 200 }}>
-                <img alt={name} src={album.images[1].url} style={{ width: '100%' }} />
-            </div>
-        );
-    };
-
-    return (
-        <div style={{
-            display: 'grid',
-            gridGap: 0,
-            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 200px))',
-        }}
-        >
-            {
-                recommended.map((item) => renderTile(item))
-            }
-        </div>
-    );
-};
-
-RecommendationList.defaultProps = {
-    recommended: [],
-};
-
-RecommendationList.propTypes = {
-    recommended: PropTypes.arrayOf(PropTypes.object),
-};
-
 export default () => {
     const { isLoggedIn } = useContext(SpotifyAuthContext);
 
@@ -76,13 +44,14 @@ export default () => {
             recommendedURL.query({
                 seed_tracks: tracks.map(({ value }) => value).join(','),
                 seed_artists: artists.map(({ value }) => value).join(','),
-                limit: 50,
+                limit: 100,
             });
             const result = await fetch(recommendedURL.toString());
             if (!result.ok) {
                 setRecommended([]);
             }
             const jsonResult = await result.json();
+            console.log('🚀 ~ file: Recommendations.js ~ line 86 ~ getRecommendations ~ jsonResult', jsonResult);
             const { tracks: recommendedTracks } = jsonResult;
 
             if (Array.isArray(recommendedTracks) && recommendedTracks.length) {
@@ -167,7 +136,7 @@ export default () => {
                 valueLabelDisplay="auto"
                 marks={marks}
             />
-            <RecommendationList recommended={recommended} />
+            <TrackList recommended={recommended} />
         </>
     );
 };
