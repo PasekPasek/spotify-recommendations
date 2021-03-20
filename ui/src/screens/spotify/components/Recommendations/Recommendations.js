@@ -1,33 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core';
 import URI from 'urijs';
-import isEmpty from 'lodash/isEmpty';
-import {
-    Slider, Typography,
-} from '@material-ui/core';
-import AsyncSelect from 'react-select/async';
-import { SpotifyAuthContext } from '../contexts/auth';
-import TrackList from './TrackList';
+import { SpotifyAuthContext } from '../../contexts/auth';
+import TrackList from '../TrackList';
+import SeedSelect from '../SeedSelect/SeedSelect';
 
-const marks = [
-    {
-        value: 0,
-        label: '0°C',
-    },
-    {
-        value: 20,
-        label: '20°C',
-    },
-    {
-        value: 37,
-        label: '37°C',
-    },
-    {
-        value: 100,
-        label: '100°C',
-    },
-];
-
-export default () => {
+const Recommendations = ({ classes }) => {
     const { isLoggedIn } = useContext(SpotifyAuthContext);
 
     const [artists, setArtists] = useState([]);
@@ -54,7 +33,7 @@ export default () => {
             console.log('🚀 ~ file: Recommendations.js ~ line 86 ~ getRecommendations ~ jsonResult', jsonResult);
             const { tracks: recommendedTracks } = jsonResult;
 
-            if (Array.isArray(recommendedTracks) && recommendedTracks.length) {
+            if (Array.isArray(recommendedTracks)) {
                 setRecommended(recommendedTracks);
             }
         } catch (err) {
@@ -64,9 +43,7 @@ export default () => {
     };
 
     useEffect(() => {
-        if (!isEmpty(artists, tracks)) {
-            getRecommendations();
-        }
+        getRecommendations();
     }, [artists, tracks]);
 
     const loadArtistsOptions = async (input) => {
@@ -105,38 +82,42 @@ export default () => {
 
     return (
         <>
-            <p>Recommendations</p>
-            <Typography id="discrete-slider-restrict" gutterBottom>
-                Artists
-            </Typography>
-            <AsyncSelect
-                onChange={(selectedArtists) => setArtists(selectedArtists)}
-                isMulti
-                cacheOptions
-                defaultOptions
-                loadOptions={loadArtistsOptions}
-            />
-            <Typography id="discrete-slider-restrict" gutterBottom>
-                Tracks
-            </Typography>
-            <AsyncSelect
-                onChange={(selectedTracks) => setTracks(selectedTracks)}
-                isMulti
-                cacheOptions
-                defaultOptions
-                loadOptions={loadTracksOptions}
-            />
-            <Typography id="discrete-slider-restrict" gutterBottom>
-                Simple slider
-            </Typography>
-            <Slider
-                defaultValue={20}
-                aria-labelledby="discrete-slider-restrict"
-                step={null}
-                valueLabelDisplay="auto"
-                marks={marks}
-            />
+            <div className={classes.seeds}>
+                <div className={classes.seedSelect}>
+                    <SeedSelect
+                        label="Artists"
+                        setSelected={setArtists}
+                        loadOptions={loadArtistsOptions}
+                    />
+                </div>
+                <div className={classes.seedSelect}>
+                    <SeedSelect
+                        className={classes.seedSelect}
+                        label="Tracks"
+                        setSelected={setTracks}
+                        loadOptions={loadTracksOptions}
+                    />
+                </div>
+            </div>
             <TrackList recommended={recommended} />
         </>
     );
 };
+
+Recommendations.propTypes = {
+    classes: PropTypes.objectOf(PropTypes.string).isRequired,
+};
+
+const styles = {
+    seeds: {
+        display: 'flex',
+        width: '100%',
+        margin: '20px 0',
+        gap: 15,
+    },
+    seedSelect: {
+        flexBasis: '50%',
+    },
+};
+
+export default withStyles(styles)(Recommendations);
