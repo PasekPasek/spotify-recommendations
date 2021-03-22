@@ -9,7 +9,7 @@ const getAccessTokenHeaders = require('./utils/getAccessTokenHeaders');
 
 const app = express();
 const {
-    clientId, authURL, tokenURL, userURL, recommendationsURL, searchURL,
+    clientId, authURL, tokenURL, userURL, recommendationsURL, searchURL, genreSeedsURL
 } = config.get('SpotifyConfig');
 const baseURL = config.get('Application.baseURL');
 const stateCookieKey = 'spotify_auth_state';
@@ -40,6 +40,40 @@ app.get('/search', async (req, res) => {
         }
 
         const data = await userDataResponse.json();
+        return res.status(200).json(data);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+app.get('/genre-seeds', async (req, res) => {
+    const accessToken = req.cookies[accessTokenCookieKey];
+    if (!accessToken) {
+        return res.status(400).json({ message: 'Wrong request' });
+    }
+
+    const availableGenreSeedsURL = new URI(genreSeedsURL);
+
+    try {
+        const genreResponse = await fetch(
+            availableGenreSeedsURL.toString(),
+            { headers: getAccessTokenHeaders(accessToken) },
+        );
+
+        if (!genreResponse.ok) {
+            return res.status(genreResponse.status).json({ message: `Spotify API responded with ${genreResponse.status}` });
+        }
+
+
+        const data = await genreResponse.json();
+        const { q } = req.query;
+        let { genres } = data;
+
+        if (q) {
+            genres = genres.filter(genre => genre.includes(q))
+        }
+
         return res.status(200).json(data);
     } catch (err) {
         console.error(err);

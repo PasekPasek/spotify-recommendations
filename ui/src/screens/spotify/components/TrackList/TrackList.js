@@ -1,14 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import TrackListTile from './TrackListTile';
 
 const TrackList = ({ recommended = [] }) => {
     const renderTile = (item) => {
-        const { name, album } = item;
+        const {
+            name, album, artists, uri,
+        } = item;
         return (
-            <div key={name} style={{ width: 200, height: 200 }}>
-                <img alt={name} src={album.images[1].url} style={{ width: '100%' }} />
-            </div>
+            <TrackListTile name={name} album={album} artists={artists} uri={uri} />
         );
+        // return (
+        //     <div key={name} style={{ width: 200, height: 200 }}>
+        //         <img alt={name} src={album.images[1].url} style={{ width: '100%' }} />
+        //     </div>
+        // );
     };
 
     return (

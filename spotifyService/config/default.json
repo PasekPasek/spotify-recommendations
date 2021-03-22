@@ -8,6 +8,7 @@
         "tokenURL": "https://accounts.spotify.com/api/token",
         "userURL": "https://api.spotify.com/v1/me",
         "recommendationsURL": "https://api.spotify.com/v1/recommendations",
-        "searchURL": "https://api.spotify.com/v1/search"
+        "searchURL": "https://api.spotify.com/v1/search",
+        "genreSeedsURL": "https://api.spotify.com/v1/recommendations/available-genre-seeds"
     }
 }

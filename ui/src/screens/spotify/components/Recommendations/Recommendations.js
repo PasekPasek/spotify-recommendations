@@ -2,15 +2,18 @@ import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core';
 import URI from 'urijs';
+import Button from '@material-ui/core/Button';
+import RefreshIcon from '@material-ui/icons/Refresh';
 import { SpotifyAuthContext } from '../../contexts/auth';
 import TrackList from '../TrackList';
-import SeedSelect from '../SeedSelect/SeedSelect';
+import SeedSelect from '../SeedSelect';
 
 const Recommendations = ({ classes }) => {
     const { isLoggedIn } = useContext(SpotifyAuthContext);
 
     const [artists, setArtists] = useState([]);
     const [tracks, setTracks] = useState([]);
+    const [genres, setGenres] = useState([]);
     const [recommended, setRecommended] = useState([]);
 
     if (!isLoggedIn) {
@@ -23,6 +26,7 @@ const Recommendations = ({ classes }) => {
             recommendedURL.query({
                 seed_tracks: tracks.map(({ value }) => value).join(','),
                 seed_artists: artists.map(({ value }) => value).join(','),
+                seed_genres: genres.map(({ value }) => value).join(','),
                 limit: 100,
             });
             const result = await fetch(recommendedURL.toString());
@@ -44,7 +48,7 @@ const Recommendations = ({ classes }) => {
 
     useEffect(() => {
         getRecommendations();
-    }, [artists, tracks]);
+    }, [artists, tracks, genres]);
 
     const loadArtistsOptions = async (input) => {
         let options = [];
@@ -80,6 +84,24 @@ const Recommendations = ({ classes }) => {
         return options;
     };
 
+    const loadGenresOptions = async (input) => {
+        let options = [];
+
+        if (!input) {
+            return options;
+        }
+
+        try {
+            const result = await fetch('/api/spotify/genre-seeds');
+            console.log('🚀 ~ file: Recommendations.js ~ line 96 ~ loadGenresOptions ~ result', result);
+            const { genres: fetchedGenres } = await result.json();
+            options = fetchedGenres.map((el) => ({ value: el, label: `${el.split('-').join(' ')}` }));
+        } catch (err) {
+            console.error(err);
+        }
+        return options;
+    };
+
     return (
         <>
             <div className={classes.seeds}>
@@ -98,7 +120,22 @@ const Recommendations = ({ classes }) => {
                         loadOptions={loadTracksOptions}
                     />
                 </div>
+                <div className={classes.seedSelect}>
+                    <SeedSelect
+                        className={classes.seedSelect}
+                        label="Genres"
+                        setSelected={setGenres}
+                        loadOptions={loadGenresOptions}
+                    />
+                </div>
             </div>
+            <Button
+                variant="contained"
+                startIcon={<RefreshIcon />}
+                onClick={() => getRecommendations()}
+            >
+                Refresh
+            </Button>
             <TrackList recommended={recommended} />
         </>
     );
