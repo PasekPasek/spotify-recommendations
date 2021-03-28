@@ -1,22 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
+import { CardContent, Typography } from '@material-ui/core';
+import AudiotrackIcon from '@material-ui/icons/Audiotrack';
+import AlbumIcon from '@material-ui/icons/Album';
+import PersonIcon from '@material-ui/icons/Person';
+import useTrackListTileStyles from './TrackListTile.styles';
 
-const TrackListTile = ({
-    artists, album, name,
-}) => {
+const TrackListTile = (props) => {
+    const { artists, album, name } = props;
+    const classes = useTrackListTileStyles(props);
     const { images } = album;
     return (
         <Card
-            style={{ width: '100%' }}
+            className={classes.root}
         >
-            <CardHeader
-                style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}
-                title={name}
-                subheader={artists.map((artistData) => artistData.name).join(', ')}
-            />
+            <CardContent>
+                <Typography gutterBottom variant="h5" component="h3">
+                    <AudiotrackIcon />
+                    {name}
+                </Typography>
+                <Typography gutterBottom variant="p" component="p">
+                    <AlbumIcon />
+                    {album.name}
+                </Typography>
+                <Typography gutterBottom variant="p" component="p">
+                    <PersonIcon />
+                    {artists.map((artistData) => artistData.name).join(', ')}
+                </Typography>
+            </CardContent>
             <CardMedia
                 image={images?.[0]?.url}
                 title={name}

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import TrackListTile from './TrackListTile';
 
 const TrackList = ({ recommended = [] }) => {
+    console.log('🚀 ~ file: TrackList.js ~ line 6 ~ TrackList ~ recommended', recommended);
     const renderTile = (item) => {
         const {
             name, album, artists, uri,
