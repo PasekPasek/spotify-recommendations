@@ -8,7 +8,20 @@ const TrackList = ({ recommended = [] }) => {
             name, album, artists, uri,
         } = item;
         return (
-            <TrackListTile name={name} album={album} artists={artists} uri={uri} />
+            <div
+                style={{
+                    overflow: 'hidden',
+                    flexBasis: 300,
+                    flexGrow: 1,
+                }}
+            >
+                <TrackListTile
+                    name={name}
+                    album={album}
+                    artists={artists}
+                    uri={uri}
+                />
+            </div>
         );
         // return (
         //     <div key={name} style={{ width: 200, height: 200 }}>
@@ -19,9 +32,10 @@ const TrackList = ({ recommended = [] }) => {
 
     return (
         <div style={{
-            display: 'grid',
-            gridGap: 0,
-            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 200px))',
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: 10,
         }}
         >
             {

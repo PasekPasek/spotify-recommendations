@@ -9,14 +9,19 @@ const TrackListTile = ({
 }) => {
     const { images } = album;
     return (
-        <Card>
+        <Card
+            style={{ width: '100%' }}
+        >
             <CardHeader
+                style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}
                 title={name}
                 subheader={artists.map((artistData) => artistData.name).join(', ')}
             />
             <CardMedia
                 image={images?.[0]?.url}
                 title={name}
+                height="300"
+                component="img"
             />
         </Card>
     );
