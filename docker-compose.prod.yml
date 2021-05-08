@@ -20,8 +20,6 @@ services:
       target: production
       args:
         BUILD_VERSION: production
-        AUTH_DOMAIN: ${AUTH_DOMAIN}
-        AUTH_CLIENT_ID: ${AUTH_CLIENT_ID}
         PORT: 3001
     environment: 
       PORT: 3001

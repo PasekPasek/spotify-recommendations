@@ -26,8 +26,6 @@ module.exports = {
         }),
         new webpack.EnvironmentPlugin({
             NODE_ENV: 'production',
-            AUTH_DOMAIN: 'auth.domain.com',
-            AUTH_CLIENT_ID: 'xyz',
         }),
     ],
     output: {
