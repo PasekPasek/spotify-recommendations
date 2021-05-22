@@ -9,7 +9,7 @@ const getAccessTokenHeaders = require('./utils/getAccessTokenHeaders');
 
 const app = express();
 const {
-    clientId, authURL, tokenURL, userURL, recommendationsURL, searchURL, genreSeedsURL
+    clientId, authURL, tokenURL, userURL, recommendationsURL, searchURL, genreSeedsURL,
 } = config.get('SpotifyConfig');
 const baseURL = config.get('Application.baseURL');
 const stateCookieKey = 'spotify_auth_state';
@@ -65,16 +65,15 @@ app.get('/genre-seeds', async (req, res) => {
             return res.status(genreResponse.status).json({ message: `Spotify API responded with ${genreResponse.status}` });
         }
 
-
         const data = await genreResponse.json();
         const { q } = req.query;
         let { genres } = data;
 
         if (q) {
-            genres = genres.filter(genre => genre.includes(q))
+            genres = genres.filter((genre) => genre.includes(q));
         }
 
-        return res.status(200).json(data);
+        return res.status(200).json({ ...data, genres });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: 'Internal server error' });
