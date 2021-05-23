@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import TrackListTile from './TrackListTile';
 
 const TrackList = ({ recommended = [] }) => {
-    console.log('🚀 ~ file: TrackList.js ~ line 6 ~ TrackList ~ recommended', recommended);
-    const renderTile = (item) => {
+    const renderTile = (item, index) => {
         const {
-            name, album, artists, uri,
+            name, album, artists, uri, external_urls
         } = item;
         return (
             <div
+                key={`${index}-${name}`}
                 style={{
                     overflow: 'hidden',
                     flexBasis: 300,
@@ -21,14 +21,10 @@ const TrackList = ({ recommended = [] }) => {
                     album={album}
                     artists={artists}
                     uri={uri}
+                    externalUrls={external_urls}
                 />
             </div>
         );
-        // return (
-        //     <div key={name} style={{ width: 200, height: 200 }}>
-        //         <img alt={name} src={album.images[1].url} style={{ width: '100%' }} />
-        //     </div>
-        // );
     };
 
     return (
@@ -36,11 +32,11 @@ const TrackList = ({ recommended = [] }) => {
             display: 'flex',
             flexDirection: 'row',
             flexWrap: 'wrap',
-            gap: 10,
+            gap: 15,
         }}
         >
             {
-                recommended.map((item) => renderTile(item))
+                recommended.map(renderTile)
             }
         </div>
     );

@@ -1,20 +1,24 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core';
 import URI from 'urijs';
 import Button from '@material-ui/core/Button';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import { SpotifyAuthContext } from '../../contexts/auth';
 import TrackList from '../TrackList';
 import SeedSelect from '../SeedSelect';
+import useRecommendationsStyles from './Recommendations.styles';
+import { useTheme } from '@material-ui/core';
 
-const Recommendations = ({ classes }) => {
+const Recommendations = () => {
+    const classes = useRecommendationsStyles();
     const { isLoggedIn } = useContext(SpotifyAuthContext);
-
     const [artists, setArtists] = useState([]);
     const [tracks, setTracks] = useState([]);
     const [genres, setGenres] = useState([]);
     const [recommended, setRecommended] = useState([]);
+    const [isStickyHeader, setStickyHeader] = useState(false);
+    const theme = useTheme();
+    const toolbarRef = useRef(null);
 
     if (!isLoggedIn) {
         return (<p>Log in, please</p>);
@@ -45,6 +49,22 @@ const Recommendations = ({ classes }) => {
             console.error(err);
         }
     };
+
+    const handleScroll= () => {
+        if (window.pageYOffset > 64) {
+            !isStickyHeader && setStickyHeader(true);
+        }else{
+            setStickyHeader(false);
+        }   
+    }
+
+    useEffect(() => {
+        window.addEventListener("scroll", handleScroll);
+
+        return () => {
+            window.removeEventListener("scroll");
+        }
+    }, []);
 
     useEffect(() => {
         getRecommendations();
@@ -102,59 +122,65 @@ const Recommendations = ({ classes }) => {
         return options;
     };
 
+    const toolbarStyles = isStickyHeader ? {
+        "position": "fixed",
+        "top": 0,
+        "width": "100%",
+        "background": theme.palette.background.default,
+        "paddingRight": 48
+    } : {};
+
+    const listStyles = isStickyHeader ? {
+        "paddingTop": toolbarRef.current.clientHeight
+    } : {};
+
     return (
         <>
-            <div className={classes.seeds}>
-                <div className={classes.seedSelect}>
-                    <SeedSelect
-                        label="Artists"
-                        setSelected={setArtists}
-                        loadOptions={loadArtistsOptions}
-                    />
+            <div className={classes.toolbar} style={toolbarStyles} ref={toolbarRef}>
+                <div className={classes.seeds}>
+                    <div className={classes.seedSelect}>
+                        <SeedSelect
+                            label="Artists"
+                            setSelected={setArtists}
+                            loadOptions={loadArtistsOptions}
+                        />
+                    </div>
+                    <div className={classes.seedSelect}>
+                        <SeedSelect
+                            className={classes.seedSelect}
+                            label="Tracks"
+                            setSelected={setTracks}
+                            loadOptions={loadTracksOptions}
+                        />
+                    </div>
+                    <div className={classes.seedSelect}>
+                        <SeedSelect
+                            className={classes.seedSelect}
+                            label="Genres"
+                            setSelected={setGenres}
+                            loadOptions={loadGenresOptions}
+                        />
+                    </div>
                 </div>
-                <div className={classes.seedSelect}>
-                    <SeedSelect
-                        className={classes.seedSelect}
-                        label="Tracks"
-                        setSelected={setTracks}
-                        loadOptions={loadTracksOptions}
-                    />
-                </div>
-                <div className={classes.seedSelect}>
-                    <SeedSelect
-                        className={classes.seedSelect}
-                        label="Genres"
-                        setSelected={setGenres}
-                        loadOptions={loadGenresOptions}
-                    />
-                </div>
+                <Button
+                    variant="contained"
+                    startIcon={<RefreshIcon />}
+                    onClick={() => getRecommendations()}
+                >
+                    Refresh
+                </Button>
             </div>
-            <Button
-                variant="contained"
-                startIcon={<RefreshIcon />}
-                onClick={() => getRecommendations()}
-            >
-                Refresh
-            </Button>
-            <TrackList recommended={recommended} />
+            <div style={listStyles}>
+                <TrackList recommended={recommended} />
+            </div>
         </>
     );
 };
 
-Recommendations.propTypes = {
-    classes: PropTypes.objectOf(PropTypes.string).isRequired,
-};
+Recommendations.propTypes = {};
 
 const styles = {
-    seeds: {
-        display: 'flex',
-        width: '100%',
-        margin: '20px 0',
-        gap: 15,
-    },
-    seedSelect: {
-        flexBasis: '50%',
-    },
+    
 };
 
-export default withStyles(styles)(Recommendations);
+export default Recommendations;

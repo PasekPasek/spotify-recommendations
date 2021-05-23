@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { addBcMessageListener } from '../utils/authBroadcastChannel';
+import { addBcMessageListener } from '../../../utils/authBroadcastChannel';
 
 export const SpotifyAuthContext = createContext();
 const callbackUrl = '/spotify-auth-callback';

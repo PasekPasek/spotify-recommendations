@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import URI from 'urijs';
-import { postBcMessage } from '../../utils/authBroadcastChannel';
+import { postBcMessage } from '../../../../utils/authBroadcastChannel';
 
 export default () => {
     useEffect(() => {
