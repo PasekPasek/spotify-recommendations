@@ -25,7 +25,7 @@ const SeedSelect = ({
     return (
         <Autocomplete
             limitTags={3}
-            size={'small'}
+            size="small"
             multiple
             onOpen={() => onInput('')}
             loading={loading}

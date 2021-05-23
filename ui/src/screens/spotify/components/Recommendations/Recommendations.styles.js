@@ -12,11 +12,11 @@ const useRecommendationsStyles = makeStyles({
         flexBasis: '50%',
     },
     sticky: {
-        position: "fixed"
+        position: 'fixed',
     },
     toolbar: {
-        padding: '15px 0'
-    }
+        padding: '15px 0',
+    },
 });
 
 export default useRecommendationsStyles;
