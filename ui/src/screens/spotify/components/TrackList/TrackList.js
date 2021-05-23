@@ -5,7 +5,7 @@ import TrackListTile from './TrackListTile';
 const TrackList = ({ recommended = [] }) => {
     const renderTile = (item, index) => {
         const {
-            name, album, artists, uri, external_urls
+            name, album, artists, uri, external_urls: externalUrls,
         } = item;
         return (
             <div
@@ -21,7 +21,7 @@ const TrackList = ({ recommended = [] }) => {
                     album={album}
                     artists={artists}
                     uri={uri}
-                    externalUrls={external_urls}
+                    externalUrls={externalUrls}
                 />
             </div>
         );

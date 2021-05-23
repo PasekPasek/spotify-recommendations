@@ -1,13 +1,14 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, {
+    useContext, useEffect, useRef, useState,
+} from 'react';
 import URI from 'urijs';
 import Button from '@material-ui/core/Button';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { useTheme } from '@material-ui/core';
 import { SpotifyAuthContext } from '../../contexts/auth';
 import TrackList from '../TrackList';
 import SeedSelect from '../SeedSelect';
 import useRecommendationsStyles from './Recommendations.styles';
-import { useTheme } from '@material-ui/core';
 
 const Recommendations = () => {
     const classes = useRecommendationsStyles();
@@ -38,7 +39,6 @@ const Recommendations = () => {
                 setRecommended([]);
             }
             const jsonResult = await result.json();
-            console.log('🚀 ~ file: Recommendations.js ~ line 86 ~ getRecommendations ~ jsonResult', jsonResult);
             const { tracks: recommendedTracks } = jsonResult;
 
             if (Array.isArray(recommendedTracks)) {
@@ -50,20 +50,20 @@ const Recommendations = () => {
         }
     };
 
-    const handleScroll= () => {
+    const handleScroll = () => {
         if (window.pageYOffset > 64) {
-            !isStickyHeader && setStickyHeader(true);
-        }else{
+            if (!isStickyHeader) setStickyHeader(true);
+        } else {
             setStickyHeader(false);
-        }   
-    }
+        }
+    };
 
     useEffect(() => {
-        window.addEventListener("scroll", handleScroll);
+        window.addEventListener('scroll', handleScroll);
 
         return () => {
-            window.removeEventListener("scroll");
-        }
+            window.removeEventListener('scroll');
+        };
     }, []);
 
     useEffect(() => {
@@ -123,15 +123,15 @@ const Recommendations = () => {
     };
 
     const toolbarStyles = isStickyHeader ? {
-        "position": "fixed",
-        "top": 0,
-        "width": "100%",
-        "background": theme.palette.background.default,
-        "paddingRight": 48
+        position: 'fixed',
+        top: 0,
+        width: '100%',
+        background: theme.palette.background.default,
+        paddingRight: 48,
     } : {};
 
     const listStyles = isStickyHeader ? {
-        "paddingTop": toolbarRef.current.clientHeight
+        paddingTop: toolbarRef.current.clientHeight,
     } : {};
 
     return (
@@ -178,9 +178,5 @@ const Recommendations = () => {
 };
 
 Recommendations.propTypes = {};
-
-const styles = {
-    
-};
 
 export default Recommendations;

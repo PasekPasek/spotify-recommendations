@@ -9,7 +9,9 @@ import PersonIcon from '@material-ui/icons/Person';
 import useTrackListTileStyles from './TrackListTile.styles';
 
 const TrackListTile = (props) => {
-    const { artists, album, name, externalUrls } = props;
+    const {
+        artists, album, name, externalUrls,
+    } = props;
     const classes = useTrackListTileStyles(props);
     const { images } = album;
     return (
@@ -17,13 +19,13 @@ const TrackListTile = (props) => {
             className={classes.root}
         >
             <CardContent>
-                <Link color="textPrimary" className={classes.textWithIcon} href={externalUrls.spotify} target='_blank'>
+                <Link color="textPrimary" className={classes.textWithIcon} href={externalUrls.spotify} target="_blank">
                     <AudiotrackIcon />
                     <Typography gutterBottom variant="h5" component="h5" className={classes.textLabel}>
                         {name}
                     </Typography>
                 </Link>
-                <Link color="textPrimary" className={classes.textWithIcon} href={album.external_urls.spotify} target='_blank'>
+                <Link color="textPrimary" className={classes.textWithIcon} href={album.external_urls.spotify} target="_blank">
                     <AlbumIcon />
                     <Typography gutterBottom variant="h6" component="h6" className={classes.textLabel}>
                         {album.name}
@@ -49,13 +51,14 @@ const TrackListTile = (props) => {
 TrackListTile.propTypes = {
     artists: PropTypes.arrayOf(PropTypes.object).isRequired,
     album: PropTypes.shape({
-        images: PropTypes.array,
-        name: PropTypes.string
+        images: PropTypes.arrayOf(PropTypes.object),
+        name: PropTypes.string,
+        external_urls: PropTypes.objectOf(PropTypes.string),
     }).isRequired,
     name: PropTypes.string.isRequired,
     externalUrls: PropTypes.shape({
-        spotify: PropTypes.string
-    }).isRequired
+        spotify: PropTypes.string,
+    }).isRequired,
 };
 
 export default TrackListTile;

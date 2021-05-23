@@ -5,14 +5,14 @@ const useTrackListTileStyles = makeStyles({
         width: '100%',
     },
     textLabel: {
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        margin: '0px 5px'
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        margin: '0px 5px',
     },
     textWithIcon: {
-        display: "flex",
-        marginBottom: 8
+        display: 'flex',
+        marginBottom: 8,
     },
     trackName: {},
     image: {},
